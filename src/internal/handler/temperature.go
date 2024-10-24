@@ -33,3 +33,14 @@ func (h *TemperatureHandler) SaveTemperature(c *fiber.Ctx) error {
         "message": "temperature data saved successfully",
     })
 }
+
+func (h *TemperatureHandler) GetAllTemperatures(c *fiber.Ctx) error {
+    data, err := h.useCase.GetAllTemperatureData(context.Background())
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+            "error": "could not retrieve data",
+        })
+    }
+
+    return c.Status(fiber.StatusOK).JSON(data)
+}

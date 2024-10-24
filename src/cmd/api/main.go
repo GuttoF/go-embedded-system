@@ -17,9 +17,10 @@ func main() {
 
 	repo := repository.NewTemperatureRepository()
 	useCase := usecase.NewTemperatureUseCase(repo)
-	handler := handler.NewTemperatureHandler(useCase)
+        temperatureHandler := handler.NewTemperatureHandler(useCase)
 
-	app.Post("/temperature", handler.SaveTemperature)
+	app.Post("/temperature", temperatureHandler.SaveTemperature)
+        app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
 
 	log.Fatal(app.Listen(":3000"))
 }

@@ -15,6 +15,9 @@ func NewTemperatureRepository() *TemperatureRepository {
 }
 
 func (r *TemperatureRepository) Save(ctx context.Context, data *domain.TemperatureData) error {
+        // add timestamp before saving
+        data.Timestamp=time.Now()
+
         _, err := db.FirebaseClient.NewRef("temperature_readings").Push(ctx, data)
         if err != nil {
                 log.Printf("error saving temperature data: %v", err)

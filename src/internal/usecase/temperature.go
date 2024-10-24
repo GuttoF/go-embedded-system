@@ -17,3 +17,7 @@ func NewTemperatureUseCase(repo *repository.TemperatureRepository) *TemperatureU
 func (uc *TemperatureUseCase) SaveTemperatureData(ctx context.Context, data *domain.TemperatureData) error {
     return uc.repo.Save(ctx, data)
 }
+
+func (uc *TemperatureUseCase) GetAllTemperatureData(ctx context.Context) ([]*domain.TemperatureData, error) {
+    return uc.repo.GetAll(ctx)
+}
