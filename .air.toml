@@ -1,3 +1,32 @@
+root = "."
+tmp_dir = "tmp"
+
 [build]
-cmd = "go build -o ./tmp/main -buildvcs=false ."
+cmd = "go build -o ./tmp/main -buildvcs=false ./src/cmd/api"
 bin = "tmp/main"
+full_bin = "tmp/main"
+delay = 2000
+
+[log]
+level = "info"
+
+[watch]
+includes = [
+  "src/**",
+]
+
+excludes = [
+  "tmp",
+]
+
+extensions = [
+  ".go",
+  ".tpl",
+  ".tmpl",
+  ".html",
+  ".css",
+  ".js",
+]
+
+[misc]
+color = true
