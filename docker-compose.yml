@@ -7,6 +7,8 @@ services:
     volumes:
       - .:/app
     working_dir: /app
+    env_file:
+      - .env
     command: >
       bash -c '
       go install github.com/air-verse/air@latest
