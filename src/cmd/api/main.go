@@ -6,7 +6,6 @@ import (
 	"go-embedded-system/src/internal/repository"
 	"go-embedded-system/src/internal/usecase"
 	"log"
-	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -14,13 +13,9 @@ import (
 func main() {
 	app := fiber.New()
 
-	mongoURI := os.Getenv("MONGO_URI")
-	database, err := db.ConnectMongo(mongoURI)
-	if err != nil {
-		log.Fatal("Failed to connect to MongoDB: ", err)
-	}
+        db.InitFirebase()
 
-	repo := repository.NewTemperatureRepository(database)
+	repo := repository.NewTemperatureRepository()
 	useCase := usecase.NewTemperatureUseCase(repo)
 	handler := handler.NewTemperatureHandler(useCase)
 

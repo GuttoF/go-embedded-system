@@ -2,23 +2,33 @@ package repository
 
 import (
         "context"
-        "go.mongodb.org/mongo-driver/mongo"
+        "log"
+        "go-embedded-system/src/internal/db"
         "go-embedded-system/src/internal/domain"
         "time"
 )
 
-type TemperatureRepository struct {
-        collection *mongo.Collection
-}
+type TemperatureRepository struct{}
 
-func NewTemperatureRepository(db *mongo.Database) *TemperatureRepository {
-        return &TemperatureRepository{
-                collection: db.Collection("temperature_readings"),
-        }
+func NewTemperatureRepository() *TemperatureRepository {
+        return &TemperatureRepository{}
 }
 
 func (r *TemperatureRepository) Save(ctx context.Context, data *domain.TemperatureData) error {
-        data.Timestamp = time.Now()
-        _, err := r.collection.InsertOne(ctx, data)
-        return err
+        _, err := db.FirebaseClient.NewRef("temperature_readings").Push(ctx, data)
+        if err != nil {
+                log.Printf("error saving temperature data: %v", err)
+                return err
+        }
+        return nil
+}
+
+func (r *TemperatureRepository) GetAll(ctx context.Context) ([]*domain.TemperatureData, error) {
+        var results []*domain.TemperatureData
+        err := db.FirebaseClient.NewRef("temperature_readings").Get(ctx, &results)
+        if err != nil {
+                log.Printf("error retrieving temperature data: %v", err)
+        return nil, err
+        }
+        return results, nil
 }
