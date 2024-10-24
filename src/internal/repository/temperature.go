@@ -3,7 +3,7 @@ package repository
 import (
         "context"
         "go.mongodb.org/mongo-driver/mongo"
-        "smart_cooling_system/internal/domain"
+        "go-embedded-system/src/internal/domain"
         "time"
 )
 

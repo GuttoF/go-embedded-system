@@ -1,9 +1,9 @@
-module github.com/GuttoF/go-embedded-system
+module go-embedded-system
 
 go 1.23.2
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.5 // direct
+	github.com/gofiber/fiber/v2 v2.52.5
 	go.mongodb.org/mongo-driver v1.17.1
 )
 
