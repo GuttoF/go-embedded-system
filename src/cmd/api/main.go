@@ -1,11 +1,30 @@
 package main
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"go-embedded-system/src/internal/db"
+	"go-embedded-system/src/internal/handler"
+	"go-embedded-system/src/internal/repository"
+	"go-embedded-system/src/internal/usecase"
+	"log"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 func main() {
 	app := fiber.New()
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("test")
-	})
-        app.Listen(":3000")
+
+	mongoURI := os.Getenv("MONGO_URI")
+	database, err := db.ConnectMongo(mongoURI)
+	if err != nil {
+		log.Fatal("Failed to connect to MongoDB: ", err)
+	}
+
+	repo := repository.NewTemperatureRepository(database)
+	useCase := usecase.NewTemperatureUseCase(repo)
+	handler := handler.NewTemperatureHandler(useCase)
+
+	app.Post("/temperature", handler.SaveTemperature)
+
+	log.Fatal(app.Listen(":3000"))
 }
