@@ -23,7 +23,9 @@ func main() {
 	temperatureHandler := handler.NewTemperatureHandler(useCase)
 
 	app.Post("/temperature", temperatureHandler.SaveTemperature)
-        app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
+  app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
+
+	app.Post("/fan", temperatureHandler.ControlFan)
 
 	log.Fatal(app.Listen(":3000"))
 }
