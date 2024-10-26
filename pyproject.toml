@@ -1,0 +1,39 @@
+[project]
+name = "go-embedded-system"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "dash>=2.18.1",
+    "pandas>=2.2.3",
+    "requests>=2.32.3",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "mypy>=1.13.0",
+    "pandas-stubs>=2.2.3.241009",
+    "python-dotenv>=1.0.1",
+    "ruff>=0.7.1",
+    "taskipy>=1.14.0",
+    "types-requests>=2.32.0.20241016",
+]
+
+[tool.taskipy.tasks]
+format = """
+ruff chec --select I --fix .
+ruff format .
+"""
+kill = "kill -9 $(lsof -t -i :8000)"
+test = "pytest -v"
+run = """
+python3 app/main.py
+"""
+doc = "mkdocs serve"
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unused_configs = true
+ignore_missing_imports = true
