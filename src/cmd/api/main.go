@@ -3,6 +3,7 @@ package main
 import (
 	"go-embedded-system/src/internal/db"
 	"go-embedded-system/src/internal/handler"
+	"go-embedded-system/src/internal/domain"
 	"go-embedded-system/src/internal/repository"
 	"go-embedded-system/src/internal/usecase"
 	"log"
@@ -13,11 +14,13 @@ import (
 func main() {
 	app := fiber.New()
 
-        db.InitFirebase()
+	db.InitPostgres()
+
+	db.DB.AutoMigrate(&domain.TemperatureData{})
 
 	repo := repository.NewTemperatureRepository()
 	useCase := usecase.NewTemperatureUseCase(repo)
-        temperatureHandler := handler.NewTemperatureHandler(useCase)
+	temperatureHandler := handler.NewTemperatureHandler(useCase)
 
 	app.Post("/temperature", temperatureHandler.SaveTemperature)
         app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
