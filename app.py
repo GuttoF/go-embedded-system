@@ -15,7 +15,7 @@ def fetch_data() -> pd.DataFrame:
     if response.status_code == 200:
         data = response.json()
         df = pd.DataFrame(data)
-        df.columns = data.columns.str.lower()
+        df.columns = df.columns.str.lower()
         return df
     else:
         return pd.DataFrame()
