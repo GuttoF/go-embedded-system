@@ -14,3 +14,17 @@ services:
       go install github.com/air-verse/air@latest
       && air --build.cmd "go build -o tmp/api src/cmd/api/main.go" --build.bin "./tmp/api"
       '
+
+  db:
+    image: postgres:17.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
