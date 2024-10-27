@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN go mod tidy \
-    && go build -o /app/api src/cmd/api/main.go
+    && go build -o /app/api app/cmd/api/main.go
 
 ###############################################
 

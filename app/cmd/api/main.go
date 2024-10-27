@@ -1,11 +1,11 @@
 package main
 
 import (
-	"go-embedded-system/src/internal/db"
-	"go-embedded-system/src/internal/handler"
-	"go-embedded-system/src/internal/domain"
-	"go-embedded-system/src/internal/repository"
-	"go-embedded-system/src/internal/usecase"
+	"go-embedded-system/app/internal/db"
+	"go-embedded-system/app/internal/handler"
+	"go-embedded-system/app/internal/domain"
+	"go-embedded-system/app/internal/repository"
+	"go-embedded-system/app/internal/usecase"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -23,7 +23,7 @@ func main() {
 	temperatureHandler := handler.NewTemperatureHandler(useCase)
 
 	app.Post("/temperature", temperatureHandler.SaveTemperature)
-  app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
+  	app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
 
 	app.Post("/fan", temperatureHandler.ControlFan)
 

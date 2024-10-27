@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"go-embedded-system/src/internal/db"
-	"go-embedded-system/src/internal/domain"
+	"go-embedded-system/app/internal/db"
+	"go-embedded-system/app/internal/domain"
 	"log"
 )
 

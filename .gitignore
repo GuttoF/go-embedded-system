@@ -27,6 +27,6 @@ go.work.sum
 # key
 firebase-key.json
 
-src/cmd/tmp/
+app/cmd/tmp/
 tmp/
 collection-bruno/
