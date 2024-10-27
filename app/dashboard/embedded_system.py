@@ -7,7 +7,7 @@ from utils import control_fan, get_sensor_data
 st.set_page_config(
     page_title="ESP32 Dashboard",
     page_icon="🌡️",
-    layout="wide",
+    #layout="wide",
 )
 
 st.title("Dashboard")
