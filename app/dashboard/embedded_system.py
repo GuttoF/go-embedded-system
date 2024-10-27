@@ -15,11 +15,15 @@ st.title("Dashboard")
 st.subheader("Project Overview")
 st.write(
     """
-    This project is an IoT-based monitoring system that tracks temperature and humidity levels in real-time using a DHT11 sensor connected to an ESP32 microcontroller.
-    The data is collected by an API built with Go, stored in a PostgreSQL database, and presented through this interactive dashboard built with Streamlit.
+    This project is an IoT-based monitoring system that tracks temperature and humidity\
+        levels in real-time using a DHT11 sensor connected to an ESP32 microcontroller.
+    The data is collected by an API built with Go, stored in a PostgreSQL database, and\
+        presented through this interactive dashboard built with Streamlit.
 
-    Users can monitor live temperature and humidity trends, view historical data, and control an external fan directly from the dashboard, making this system ideal
-    for environments where maintaining specific temperature and humidity conditions is crucial.
+    Users can monitor live temperature and humidity trends, view historical data, and\
+        control an external fan directly from the dashboard, making this system ideal
+    for environments where maintaining specific temperature and humidity conditions\
+        is crucial.
     """
 )
 
@@ -32,9 +36,7 @@ def fetch_data() -> pd.DataFrame:
     if sensor_data is not None and not sensor_data.empty:
         sensor_data["Timestamp"] = pd.to_datetime(sensor_data["Timestamp"])
         sensor_data["Date"] = sensor_data["Timestamp"].dt.date  # Dia e mês
-        sensor_data["Time"] = sensor_data["Timestamp"].dt.strftime(
-            "%H:%M"
-        )
+        sensor_data["Time"] = sensor_data["Timestamp"].dt.strftime("%H:%M")
         return sensor_data
     else:
         return pd.DataFrame(
@@ -48,7 +50,11 @@ with st.sidebar:
         new_state = "off" if st.session_state.fan_state == "on" else "on"
         control_fan(new_state)
         st.session_state.fan_state = new_state
-    st.write(f"Current Fan State: {st.session_state.fan_state.capitalize()}")
+
+    if st.session_state.fan_state == "on":
+        st.success("Fan is ON")
+    else:
+        st.error("Fan is OFF")
 
     st.subheader("Date Filter")
     data = fetch_data()
