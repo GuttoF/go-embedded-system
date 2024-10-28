@@ -2,10 +2,9 @@ import os
 
 import pandas as pd
 import requests
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-# Carregar variáveis do .env da raiz
-load_dotenv(".env")
+# load_dotenv(".env")
 API_URL = os.getenv("API_URL")
 
 

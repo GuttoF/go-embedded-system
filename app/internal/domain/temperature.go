@@ -9,6 +9,11 @@ type TemperatureData struct {
 	Timestamp   time.Time `gorm:"autoCreateTime"`
 }
 
+func (t *TemperatureData) AdjustTime() {
+	location, _ := time.LoadLocation("America/Sao_Paulo")
+	t.Timestamp = t.Timestamp.In(location)
+}
+
 type FanControl struct {
 	State string `json:"state"` // on or off
 }

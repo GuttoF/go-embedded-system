@@ -35,7 +35,7 @@ def fetch_data() -> pd.DataFrame:
     sensor_data = get_sensor_data()
     if sensor_data is not None and not sensor_data.empty:
         sensor_data["Timestamp"] = pd.to_datetime(sensor_data["Timestamp"])
-        sensor_data["Date"] = sensor_data["Timestamp"].dt.date  # Dia e mês
+        sensor_data["Date"] = sensor_data["Timestamp"].dt.date
         sensor_data["Time"] = sensor_data["Timestamp"].dt.strftime("%H:%M")
         return sensor_data
     else:
@@ -74,14 +74,14 @@ if selected_date is not None:
     ]
 
 st.subheader("Temperature Plot")
-temperature_chart = st.empty()  # Placeholder para o gráfico de temperatura
+temperature_chart = st.empty()
 temperature_chart.line_chart(data.set_index("Timestamp")["Temperature"])
 
 humidity_col, df_col = st.columns([2, 2])
 
 with humidity_col:
     st.subheader("Humidity Plot")
-    humidity_chart = st.empty()  # Placeholder para o gráfico de umidade
+    humidity_chart = st.empty()
     humidity_chart.line_chart(data.set_index("Timestamp")["Humidity"])
 
 with df_col:
