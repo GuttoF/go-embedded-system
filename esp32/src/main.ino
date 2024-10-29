@@ -2,118 +2,112 @@
 #include <HTTPClient.h>
 #include <DHT.h>
 
-#define DHTPIN 5
-#define DHTTYPE DHT11
-#define LED_PIN 18
-
-// Replace with your network credentials
+// Wi-Fi configuration
 const char* ssid = "";
 const char* password = "";
-iconst char* serverTemp = "";
-const char* serverFan = "";
+
+#define DHTPIN 26
+#define FAN_PIN 2
+#define DHTTYPE DHT11
 
 DHT dht(DHTPIN, DHTTYPE);
+String apiUrl = ":3000";  // Replace
 
-void connectToWiFi() {
-	WiFi.begin(ssid, password);
-	Serial.print("Connecting to WiFi");
-	while (WiFi.status() != WL_CONNECTED) {
-		delay(500);
-		Serial.print(".");
-	}
-	Serial.println("Connected to WiFi");
+void connectWiFi() {
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  Serial.println("\nConnected to WiFi!");
 }
 
-float readTemperature() {
-	float temp = dht.readTemperature();
-	if (isnan(temp)) {
-	Serial.println("Failed to read temperature from DHT sensor!");
-	}
-	return temp;
+void initHardware() {
+  dht.begin();
+  pinMode(FAN_PIN, OUTPUT);
 }
 
+void checkFanStatus() {
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String serverPath = apiUrl + "/fan/status";
 
-float readHumidity() {
-	float hum = dht.readHumidity();
-	if (isnan(hum)) {
-		Serial.println("Failed to read humidity from DHT sensor!");
-	}
-	return hum;
+    http.begin(serverPath.c_str());
+    int httpResponseCode = http.GET();
+
+    if (httpResponseCode == 200) {
+      String response = http.getString();
+      if (response.indexOf("\"state\":\"on\"") > -1) {
+        digitalWrite(FAN_PIN, HIGH);
+        Serial.println("Fan turned ON via dashboard");
+      } else if (response.indexOf("\"state\":\"off\"") > -1) {
+        digitalWrite(FAN_PIN, LOW);
+        Serial.println("Fan turned OFF via dashboard");
+      }
+    } else {
+      Serial.print("Error checking fan status: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  } else {
+    Serial.println("WiFi disconnected, attempting to reconnect...");
+    connectWiFi();
+  }
 }
-
 
 void sendTemperatureData(float temperature, float humidity) {
-	if (WiFi.status() == WL_CONNECTED) {
-		HTTPClient http;
-		http.begin(serverTemp);
+  if (WiFi.status() == WL_CONNECTED) {
+    HTTPClient http;
+    String serverPath = apiUrl + "/temperature";
 
+    http.begin(serverPath.c_str());
+    http.addHeader("Content-Type", "application/json");
 
-		String jsonPayload = "{\"temperature\":" + String(temperature) + ",\"humidity\":" + String(humidity) + "}";
-		http.addHeader("Content-Type", "application/json");
+    String jsonPayload = "{\"temperature\":" + String(temperature) + ",\"humidity\":" + String(humidity) + "}";
+    int httpResponseCode = http.POST(jsonPayload);
 
-		int httpResponseCode = http.POST(jsonPayload);
-
-	if (httpResponseCode > 0) {
-		Serial.print("Temperature and Humidity Data Sent. Response code: ");
-		Serial.println(httpResponseCode);
-	} else {
-		Serial.print("Error on sending POST: ");
-		Serial.println(httpResponseCode);
-	}
-		http.end();
-	} else {
-		Serial.println("Disconnected from WiFi");
-	}
+    if (httpResponseCode > 0) {
+      Serial.print("Response code: ");
+      Serial.println(httpResponseCode);
+      Serial.print("API response: ");
+      Serial.println(http.getString());
+    } else {
+      Serial.print("Error sending data: ");
+      Serial.println(httpResponseCode);
+    }
+    http.end();
+  }
 }
 
+void readSensorData(float &temperature, float &humidity) {
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
 
-void controlFan() {
-	if (WiFi.status() == WL_CONNECTED) {
-	HTTPClient http;
-	http.begin(serverFan);
-	http.addHeader("Content-Type", "application/json");
-
-
-	int httpResponseCode = http.POST("");
-
-	if (httpResponseCode > 0) {
-		String response = http.getString();
-		Serial.println("Fan Control Response: " + response);
-
-
-		if (response.indexOf("\"fan\":\"on\"") > 0) {
-			digitalWrite(LED_PIN, HIGH);
-			Serial.println("Fan ON");
-		} else if (response.indexOf("\"fan\":\"off\"") > 0) {
-			digitalWrite(LED_PIN, LOW);
-			Serial.println("Fan OFF");
-		}
-		} else {
-			Serial.print("Error on fan control POST: ");
-			Serial.println(httpResponseCode);
-		}
-	http.end();
-	}
+  if (isnan(temperature) || isnan(humidity)) {
+    Serial.println("Failed to read from DHT sensor");
+  } else {
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.print(" °C, Humidity: ");
+    Serial.print(humidity);
+    Serial.println(" %");
+  }
 }
-
 
 void setup() {
-	Serial.begin(115200);
-	pinMode(LED_PIN, OUTPUT);
-	digitalWrite(LED_PIN, LOW);
-
-	dht.begin();
-	connectToWiFi();
+  Serial.begin(115200);
+  connectWiFi();
+  initHardware();
 }
 
 void loop() {
-	float temperature = readTemperature();
-	float humidity = readHumidity();
+  float temperature = 0.0;
+  float humidity = 0.0;
 
-	if (!isnan(temperature) && !isnan(humidity)) {
-		sendTemperatureData(temperature, humidity);
-		controlFan();
-	}
+  readSensorData(temperature, humidity);
+  sendTemperatureData(temperature, humidity);
+  checkFanStatus();
 
-	delay(5000);
+  delay(5000);
 }

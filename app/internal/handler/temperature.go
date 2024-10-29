@@ -9,10 +9,14 @@ import (
 
 type TemperatureHandler struct {
 	useCase *usecase.TemperatureUseCase
+	fanStatus string
 }
 
 func NewTemperatureHandler(useCase *usecase.TemperatureUseCase) *TemperatureHandler {
-	return &TemperatureHandler{useCase: useCase}
+	return &TemperatureHandler{
+		useCase: useCase,
+		fanStatus: "off",
+	}
 }
 
 func (h *TemperatureHandler) SaveTemperature(c *fiber.Ctx) error {
@@ -53,13 +57,16 @@ func (h *TemperatureHandler) ControlFan(c *fiber.Ctx) error {
 		})
 	}
 
-	if fanControl.State == "on" {
-		return c.JSON(fiber.Map{"message": "Fan turned ON"})
-	} else if fanControl.State == "off" {
-		return c.JSON(fiber.Map{"message": "Fan turned OFF"})
+	if fanControl.State == "on" || fanControl.State == "off" {
+		h.fanStatus = fanControl.State
+		return c.JSON(fiber.Map{"message": "Fan status updated", "state": h.fanStatus})
 	} else {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Invalid state. Use 'on' or 'off'.",
 		})
 	}
+}
+
+func (h *TemperatureHandler) GetFanStatus(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{"state": h.fanStatus})
 }

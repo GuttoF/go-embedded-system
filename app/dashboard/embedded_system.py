@@ -7,7 +7,7 @@ from utils import control_fan, get_sensor_data
 st.set_page_config(
     page_title="ESP32 Dashboard",
     page_icon="🌡️",
-    #layout="wide",
+    # layout="wide",
 )
 
 st.title("Dashboard")
@@ -34,7 +34,9 @@ if "fan_state" not in st.session_state:
 def fetch_data() -> pd.DataFrame:
     sensor_data = get_sensor_data()
     if sensor_data is not None and not sensor_data.empty:
-        sensor_data["Timestamp"] = pd.to_datetime(sensor_data["Timestamp"])
+        sensor_data["Timestamp"] = pd.to_datetime(
+            sensor_data["Timestamp"]
+        ) - pd.Timedelta(hours=3)
         sensor_data["Date"] = sensor_data["Timestamp"].dt.date
         sensor_data["Time"] = sensor_data["Timestamp"].dt.strftime("%H:%M")
         return sensor_data

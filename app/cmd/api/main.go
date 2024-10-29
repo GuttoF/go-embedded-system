@@ -26,6 +26,7 @@ func main() {
 	app.Get("/temperatures", temperatureHandler.GetAllTemperatures)
 
 	app.Post("/fan", temperatureHandler.ControlFan)
+	app.Get("/fan/status", temperatureHandler.GetFanStatus)
 
 	log.Fatal(app.Listen(":3000"))
 }
