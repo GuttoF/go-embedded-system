@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "app/dashboard/embedded_system.py"]
+CMD ["streamlit", "run", "embedded_system.py"]
