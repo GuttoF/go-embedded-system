@@ -12,20 +12,8 @@ services:
     command: >
       bash -c '
       go install github.com/air-verse/air@latest
-      && air --build.cmd "go build -o tmp/api app/cmd/api/main.go" --build.bin "./tmp/api"
+      && air --build.cmd "go build -o tmp/api cmd/main.go" --build.bin "./tmp/api"
       '
-
-  dashboard:
-    build:
-      context: .
-      dockerfile: Dockerfile-streamlit
-    container_name: dashboard-streamlit
-    ports:
-      - "8501:8501"
-    env_file:
-      - .env
-    depends_on:
-      - app
 
   db:
     image: postgres:17.0

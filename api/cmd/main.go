@@ -1,11 +1,11 @@
 package main
 
 import (
-	"go-embedded-system/app/internal/db"
-	"go-embedded-system/app/internal/handler"
-	"go-embedded-system/app/internal/domain"
-	"go-embedded-system/app/internal/repository"
-	"go-embedded-system/app/internal/usecase"
+	"go-embedded-system/internal/db"
+	"go-embedded-system/internal/handler"
+	"go-embedded-system/internal/domain"
+	"go-embedded-system/internal/repository"
+	"go-embedded-system/internal/usecase"
 	"log"
 
 	"github.com/gofiber/fiber/v2"

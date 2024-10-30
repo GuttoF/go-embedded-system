@@ -3,8 +3,8 @@ package handler
 import (
 	"context"
 	"github.com/gofiber/fiber/v2"
-	"go-embedded-system/app/internal/domain"
-	"go-embedded-system/app/internal/usecase"
+	"go-embedded-system/internal/domain"
+	"go-embedded-system/internal/usecase"
 )
 
 type TemperatureHandler struct {

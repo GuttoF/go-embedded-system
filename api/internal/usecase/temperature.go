@@ -2,8 +2,8 @@ package usecase
 
 import (
 	"context"
-	"go-embedded-system/app/internal/domain"
-	"go-embedded-system/app/internal/repository"
+	"go-embedded-system/internal/domain"
+	"go-embedded-system/internal/repository"
 )
 
 type TemperatureUseCase struct {
