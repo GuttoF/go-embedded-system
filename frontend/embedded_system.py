@@ -1,13 +1,12 @@
 import time
-
 import pandas as pd
 import streamlit as st
+import plotly.express as px
 from utils import control_fan, get_sensor_data
 
 st.set_page_config(
     page_title="ESP32 Dashboard",
     page_icon="🌡️",
-    # layout="wide",
 )
 
 st.title("Dashboard")
@@ -76,20 +75,21 @@ if selected_date is not None:
     ]
 
 st.subheader("Temperature Plot")
-temperature_chart = st.empty()
-temperature_chart.line_chart(data.set_index("Timestamp")["Temperature"])
+fig_temp = px.line(data, x="Timestamp", y="Temperature", title="Temperature over Time")
+fig_temp.update_yaxes(rangemode="tozero", range=[data["Temperature"].max() - 5, data["Temperature"].max() + 5])
+st.plotly_chart(fig_temp)
 
 humidity_col, df_col = st.columns([2, 2])
 
 with humidity_col:
     st.subheader("Humidity Plot")
-    humidity_chart = st.empty()
-    humidity_chart.line_chart(data.set_index("Timestamp")["Humidity"])
+    fig_humidity = px.line(data, x="Timestamp", y="Humidity", title="Humidity over Time")
+    fig_humidity.update_yaxes(rangemode="tozero", range=[data["Humidity"].min() - 5, data["Humidity"].max() + 5])
+    st.plotly_chart(fig_humidity)
 
 with df_col:
     st.subheader("Sensor Data")
-    data_placeholder = st.empty()
-    data_placeholder.dataframe(data[["ID", "Temperature", "Humidity", "Date", "Time"]])
+    st.dataframe(data[["ID", "Temperature", "Humidity", "Date", "Time"]])
 
 while True:
     data = fetch_data()
@@ -101,9 +101,14 @@ while True:
             & (data["Time"] <= end_time)
         ]
 
-    temperature_chart.line_chart(data.set_index("Timestamp")["Temperature"])
-    humidity_chart.line_chart(data.set_index("Timestamp")["Humidity"])
-    data_placeholder.dataframe(data[["ID", "Temperature", "Humidity", "Date", "Time"]])
+    fig_temp = px.line(data, x="Timestamp", y="Temperature", title="Temperature over Time")
+    fig_temp.update_yaxes(rangemode="tozero", range=[18, data["Temperature"].max() + 5])
+    fig_humidity = px.line(data, x="Timestamp", y="Humidity", title="Humidity over Time")
+    fig_humidity.update_yaxes(rangemode="tozero", range=[18, data["Humidity"].max() + 5])
+
+    st.plotly_chart(fig_temp)
+    st.plotly_chart(fig_humidity)
+    st.dataframe(data[["ID", "Temperature", "Humidity", "Date", "Time"]])
 
     time.sleep(5)
     st.rerun()
